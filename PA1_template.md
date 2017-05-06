@@ -112,7 +112,7 @@ act_na_replaced <- act_df %>%
 
 As instructed, ignoring the missing values in the dataset.
 
-1. A histogram of the total number of steps taken each day. The green line indicates the overall average.
+1. A histogram of the total number of steps taken each day. 
 
 
 ```r
@@ -120,10 +120,13 @@ g <- act_na_omit %>%
     group_by(date) %>%
     summarise(total = sum(steps))
     
-ggplot(g, aes(date,total)) +
-    geom_bar(stat = "identity") +
-    geom_hline(yintercept = mean(g$total), color = "green") +
-    labs(x = "Day", y = "Total steps")
+ggplot(g, aes(total)) +
+    geom_histogram() +
+    labs(x = "Steps per day", y = "Frequency")
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
@@ -148,6 +151,7 @@ median(g$total)
 ## [1] 10765
 ```
 
+The mean is 10766 (rounded off) steps and the median is 10765.
 
 ### What is the average daily activity pattern?
 
@@ -265,7 +269,7 @@ sum(is.na(new_df$steps))
 ## [1] 0
 ```
 
-4. A histogram of the total number of steps taken each day. The green line indicates the overall average. 
+4. A histogram of the total number of steps taken each day. 
 
 
 ```r
@@ -273,10 +277,13 @@ g3 <- new_df %>%
     group_by(date) %>%
     summarise(total = sum(steps))
 
-ggplot(g3, aes(date,total)) +
-    geom_bar(stat = "identity") +
-    geom_hline(yintercept = mean(g3$total), color = "green") +
-    labs(x = "Day", y = "Total steps")
+ggplot(g3, aes(total)) +
+    geom_histogram() +
+    labs(x = "Steps per day", y = "Frequency")
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
@@ -299,6 +306,8 @@ median(g3$total)
 ```
 ## [1] 10766.19
 ```
+
+The mean and the median are 10766 (rounded off).
 
 Now comparing the total steps between the two datasets
 with NA and the one with data imputed.
