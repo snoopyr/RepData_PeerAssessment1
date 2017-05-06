@@ -1,14 +1,7 @@
----
-title: "Reproducible Research - Assignment 2"
-date: "06-May-2017"
-output: 
-  html_document: 
-    keep_md: yes
----
+# Reproducible Research - Assignment 2
+06-May-2017  
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 
 ## Data
 
@@ -37,8 +30,29 @@ dataset.
 ## Assignment
 
 
-```{r}
+
+```r
 library(dplyr)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 library(tidyr)
 library(ggplot2)
 ```
@@ -47,7 +61,8 @@ library(ggplot2)
 
 1. Load the data (i.e. `read.csv()`)
 
-```{r}
+
+```r
 if (!file.exists("actvity.csv")){
     unzip("activity.zip")
 } else {
@@ -61,11 +76,20 @@ act_df <- tbl_df(act_df)
 glimpse(act_df)
 ```
 
+```
+## Observations: 17,568
+## Variables: 3
+## $ steps    <int> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
+## $ date     <chr> "2012-10-01", "2012-10-01", "2012-10-01", "2012-10-01...
+## $ interval <int> 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 100, 10...
+```
+
 2. Processing/transforming the data into a format suitable for  analysis
 
 * Setting date column in the right format
 
-```{r}
+
+```r
 act_df <- act_df %>%
     mutate(date = as.Date(date, format = "%Y-%m-%d"))
 ```
@@ -74,7 +98,8 @@ Making two data frames
 * One with all the NA's removed
 * One with all the NA's replaced with zeros
 
-```{r}
+
+```r
 act_na_omit <- act_df %>% 
     na.omit()
 
@@ -89,7 +114,8 @@ As instructed, ignoring the missing values in the dataset.
 
 1. A histogram of the total number of steps taken each day. The green line indicates the overall average.
 
-```{r}
+
+```r
 g <- act_na_omit %>%
     group_by(date) %>%
     summarise(total = sum(steps))
@@ -100,12 +126,26 @@ ggplot(g, aes(date,total)) +
     labs(x = "Day", y = "Total steps")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
 
 2. Calculating the **mean** and **median** total number of steps taken per day
 
-```{r}
+
+```r
 mean(g$total)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(g$total)
+```
+
+```
+## [1] 10765
 ```
 
 
@@ -116,7 +156,8 @@ median(g$total)
 2. Marked in red, the 5-minute interval, on average across all the days in the dataset, containing the maximum number of steps. The
 green line is the overall average.
 
-```{r}
+
+```r
 g2 <- act_na_omit %>%
     group_by(interval) %>%
     summarise(avg.steps = mean(steps))
@@ -145,6 +186,8 @@ ggplot(g2, aes(interval, avg.steps)) +
               hjust = -0.25, vjust = 0)
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+
 
 ### Imputing missing values
 Note that there are a number of days/intervals where there are missing
@@ -153,12 +196,37 @@ bias into some calculations or summaries of the data.
 
 1. Calculating the total number of missing values in the dataset (i.e. the total number of rows with `NA`s)
 
-```{r}
-mean(is.na(act_df$steps))
-mean(is.na(act_df$date))
-mean(is.na(act_df$interval))
 
+```r
+mean(is.na(act_df$steps))
+```
+
+```
+## [1] 0.1311475
+```
+
+```r
+mean(is.na(act_df$date))
+```
+
+```
+## [1] 0
+```
+
+```r
+mean(is.na(act_df$interval))
+```
+
+```
+## [1] 0
+```
+
+```r
 sum(is.na(act_df$steps))
+```
+
+```
+## [1] 2304
 ```
 
 
@@ -167,20 +235,40 @@ sum(is.na(act_df$steps))
 3. Now a new dataset that is equal to the original dataset but with the missing data filled in is created.
 
 
-```{r}
+
+```r
 # first replace missing steps by avg for that interval
 dim(act_df)
+```
+
+```
+## [1] 17568     3
+```
+
+```r
 new_df <- act_df %>% 
     left_join(g2, by = "interval") %>%
     mutate(steps = ifelse(is.na(steps), avg.steps, steps)) %>%
     select(steps, date, interval)
 dim(new_df)
+```
+
+```
+## [1] 17568     3
+```
+
+```r
 sum(is.na(new_df$steps))      
+```
+
+```
+## [1] 0
 ```
 
 4. A histogram of the total number of steps taken each day. The green line indicates the overall average. 
 
-```{r}
+
+```r
 g3 <- new_df %>%
     group_by(date) %>%
     summarise(total = sum(steps))
@@ -191,17 +279,32 @@ ggplot(g3, aes(date,total)) +
     labs(x = "Day", y = "Total steps")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+
 Also calculating the **mean** and **median** total number of steps taken per day. 
 
-```{r}
+
+```r
 mean(g3$total)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(g3$total)
+```
+
+```
+## [1] 10766.19
 ```
 
 Now comparing the total steps between the two datasets
 with NA and the one with data imputed.
 
-```{r}
+
+```r
 withna <- act_na_replaced %>%
     group_by(date) %>%
     summarise(total = sum(steps))
@@ -215,8 +318,9 @@ newg <- withna %>%
 ggplot(newg, aes(date, steps, col = hasna)) +
     geom_line() +
     labs(x = "Day", y = "Total steps")
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
 
 These values do not differ from the estimates from the first part of the assignment. Thus the impact of imputing missing data on the estimates of the total daily number of steps is minimal.
 
@@ -228,7 +332,8 @@ Using the dataset with the filled-in missing values for this part.
 
 1. A new factor variable in the dataset with two levels -- "weekday" and "weekend" is created to indicate whether a given date is a weekday or weekend day.
 
-```{r}
+
+```r
 new_df2 <- new_df %>%
     mutate(days = ifelse(weekdays(date) %in% c("Saturday", "Sunday"),
                          "weekend", "weekday"),
@@ -239,13 +344,15 @@ new_df2 <- new_df %>%
 
 2. Now a panel plot containing a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis) is shown. 
 
-```{r}
+
+```r
 ggplot(new_df2, aes(interval, avg.steps))+
     geom_line(col = "blue") + 
     facet_grid(days~.) +
     labs(x = "Interval [min]", y = "Average steps")
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 
 
 
